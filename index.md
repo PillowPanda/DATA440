@@ -5,7 +5,7 @@ feature_text: |
   ## Yera Park
 ---
 
-<img src="https://imgur.com/a/UrigRym">
+<img src="https://imgur.com/IRmnLB1">
 
 Hello! I am a senior at the College of William and Mary.<br>
 I am double majoring in Data Science and Government.<br>
