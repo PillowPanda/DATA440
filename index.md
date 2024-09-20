@@ -10,5 +10,3 @@ feature_text: |
 Hello! I am a senior at the College of William and Mary.<br>
 I am double majoring in Data Science and Government.<br>
 I like to organize events, play piano and guitar, and meet new people.
-
-test 123
