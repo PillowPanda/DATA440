@@ -1,5 +1,5 @@
 ---
-title: About this website
+title: DATA 440 HW 1
 ---
 
-I'm not sure yet what this website is about, but I'm sure I'll work it out soon.
+LOWESS
