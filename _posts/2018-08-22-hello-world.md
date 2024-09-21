@@ -348,11 +348,11 @@ for kernel_name, mse in kernel_mse_results.items():
 
 Comparison of Kernels Based on 10-Fold Cross-Validated MSE: 
 
-Gaussian: 4855.9033 
-Tricubic: 6398.6382 
-Epanechnikov: 6399.3141 
-Quartic: 6398.7581 
-Cauchy: 789.5126
+Gaussian: 4855.9033 <br>
+Tricubic: 6398.6382  <br>
+Epanechnikov: 6399.3141  <br>
+Quartic: 6398.7581  <br>
+Cauchy: 789.5126 <br>
 
 ```python
 # Visualize the results
