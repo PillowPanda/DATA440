@@ -365,7 +365,7 @@ plt.ylabel('Mean Squared Error')
 plt.title('Kernel Comparison Based on 10-Fold Cross-Validation')
 plt.show()
 ```
-![alt text](/assets/images/kernels_output.png)
+![alt text](240920_test/assets/images/kernels_output.png)
 
 ![second](https://github.com/PillowPanda/240920_test/blob/master/kernels_output.png)
 
