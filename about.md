@@ -1,5 +1,6 @@
 ---
-title: DATA 440 HW 1
+title: Yera's Website
 ---
 
-LOWESS
+Hello! Welcome to Yera's website
+This Blog will soon be filled with projects!
