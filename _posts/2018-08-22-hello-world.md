@@ -252,6 +252,8 @@ plt.show()
 ```
 <img src="predicted_comparison.png" alt="predicted values comparison">
 
+![Predicted Values Comparison](https://imgur.com/4WIqYzA "predicted values comparison")
+
 ```python
 residuals = y_test - y_pred
 plt.scatter(y_pred, residuals, color='green')
