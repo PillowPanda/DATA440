@@ -362,6 +362,9 @@ plt.ylabel('Mean Squared Error')
 plt.title('Kernel Comparison Based on 10-Fold Cross-Validation')
 plt.show()
 ```
+<img src="{{site.baseurl}}/assets/img/kernels_output.png">
+
+
 <img src="kernels_output.png" alt="kernel graph comparison">
 
 The first four bars are similar in height, especially the middle three, which means that they have similar performance. Cauchy shows a significant amount of decrease in mean squared error, signifying that it was likely that the dataset had a lot of distant values that was better not being accounted for. However, this dataset was small, so there needs to be further testing on it. 
