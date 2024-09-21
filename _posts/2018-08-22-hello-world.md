@@ -257,6 +257,9 @@ plt.show()
 ![Predicted Values Comparison]({{ site.baseurl }}/assets/images/predicted_comparison.png)
 
 
+![PredictedValuesComparison]({{ site.baseurl }}/assets/images/predicted_comparison.png)
+
+
 ```python
 residuals = y_test - y_pred
 plt.scatter(y_pred, residuals, color='green')

@@ -70,3 +70,7 @@ defaults:
       type: "pages"
     values:
       layout: page # Set the default layout for pages
+
+# Site settings
+url: 'https://pillowpanda.github.io'
+baseurl: '/240920_test'  # Base URL for the repository
