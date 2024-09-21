@@ -5,4 +5,367 @@ categories:
 feature_image: "https://picsum.photos/2560/600?image=872"
 ---
 
-This is my very first blog post. I haven't written anything yet but I'm sure I have some great stories to tell.
+**Locally Weighted Regression** **(LOWESS)**
+
+
+
+<u>What is Regression?</u>
+
+Within the range of input features (x), determining or predicting the dependent variable (y).
+
+
+
+<u>Why do we do 'locally' weighted regression?</u>
+
+Although trends are typically nonlinear, up close, it can be interpreted linearly if data is observed locally. In order to see the trends of nonlinear/nonparametric graphs, it is best to see overall trends through LOWESS. 
+
+
+
+<u>What are kernels?</u>
+
+A kernel is a weighting function used in many non-parametric estimation techniques. In this case, we will use the kernels to weigh observation of the learning sample based on their distance from the predicted observation.
+
+
+
+Here are the lists of common kernels that we will be using in the code below.
+
+- The Exponential (Gaussian) Kernel
+- The Tricubic Kernel
+- The Epanechnikov Kernel
+- The Quadratic Kernel
+
+
+
+<u>Additional Readings:</u> 
+
+1. Cleveland, William S. “Robust Locally Weighted Regression and Smoothing Scatterplots.” *Journal of the American Statistical Association* 74, no. 368 (December 1979): 829–36. https://doi.org/10.2307/2286407. 
+
+2. Cleveland, William S., and Susan J. Devlin. “Locally Weighted Regression: An Approach to Regression Analysis by Local Fitting.” *Journal of the American Statistical Association* 83, no. 403 (September 1988): 596–610. https://doi.org/10.2307/2289282. 
+
+
+
+<u>Dataset</u>
+
+Link to the dataset: https://github.com/dvasiliu/AAML/blob/main/Data%20Sets/mtcars.csv
+
+<u>Snippets of the dataset</u> 
+
+| model          | mpg  | cyl  | disp  | hp   | drat | wt    | qsec  | vs   | am   | gear | carb |
+| :------------- | :--- | :--- | :---- | :--- | :--- | :---- | :---- | :--- | :--- | :--- | :--- |
+| Mazda RX4      | 21.0 | 6    | 160.0 | 110  | 3.9  | 2.62  | 16.46 | 0    | 1    | 4    | 4    |
+| Mazda RX4 Wag  | 21.0 | 6    | 160.0 | 110  | 3.9  | 2.875 | 17.02 | 0    | 1    | 4    | 4    |
+| Datsun 710     | 22.8 | 4    | 108.0 | 93   | 3.85 | 2.32  | 18.61 | 1    | 1    | 4    | 1    |
+| Hornet 4 Drive | 21.4 | 6    | 258.0 | 110  | 3.08 | 3.215 | 19.44 | 1    | 0    | 3    | 1    |
+
+32 rows x 12 columns
+
+```python
+# Import necessary libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from scipy import linalg
+from scipy.spatial import Delaunay
+from scipy.interpolate import interp1d
+from scipy.spatial.distance import cdist
+
+from usearch.index import search, MetricKind, Matches, BatchMatches
+
+from sklearn import linear_model
+from sklearn.linear_model import Ridge
+from sklearn.exceptions import NotFittedError
+from sklearn.metrics import mean_squared_error
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.base import BaseEstimator, RegressorMixin
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.model_selection import train_test_split, KFold, GridSearchCV
+from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
+```
+
+```python
+# Import dataset
+data = pd.read_csv('https://github.com/dvasiliu/AAML/blob/main/Data%20Sets/mtcars.csv?raw=True')
+```
+
+```python
+# Multiple features 
+X = data.drop(columns=['model', 'mpg']).values
+y = data['mpg'].values
+```
+
+```python
+# Scale the attributes to compute distances
+scaler = StandardScaler()
+xscaled = scaler.fit_transform(X)
+```
+
+
+
+<u>Using Cdist</u> 
+
+```python
+many_in_many: BatchMatches = search(xscaled, xscaled,len(xscaled) , MetricKind.L2sq, exact=True)
+```
+
+In the code above, each car in the dataset is compared to each and every data points including itself. This creates a matrix including the squared L2 distance between car i and j. 
+
+For each data point in xscaled (representing each car), the code computes the squared Euclidean (L2) distance to every data points including itself. 
+
+```python
+one_in_many: Matches = search(xscaled, xscaled[0], len(xscaled), MetricKind.L2sq, exact=True)
+```
+
+In this code, the first car (xscaled[0]) is compared to every other car in the dataset. xscaled[0] is used as the query and entire dataset xscaled is the search space. This creates a 1D vector with a length of number of cars. 
+
+```python
+dist = one_in_many.to_list()
+distances = cdist(xscaled,xscaled,metric='Euclidean')
+```
+
+Using cdist, we can compute pairwise distances between all points (cars) in the dataset. 
+
+Similar to above, 'dist' is a 1D vector that has the squared L2 distances between the first car and all cars, but distances is a 2D matrix that has  Euclidean distances between all cars. 
+
+```python
+# Gaussian Kernel
+def Gaussian(x):
+  return np.where(np.abs(x)>4,0,1/(np.sqrt(2*np.pi))*np.exp(-1/2*x**2))
+
+kern = Gaussian
+weights = kernel_function(distances,kern,tau=0.05)
+```
+
+
+
+```python
+model = Ridge(alpha=0.001,max_iter=5000)
+model.fit(np.diag(weights[:,0])@xscaled, np.diag(weights[:,0])@y)
+```
+
+
+
+```python
+model.predict(xscaled[0].reshape(1,-1))
+```
+
+array([20.97295036])
+
+```python
+y[0]
+```
+
+21.0
+
+This is a decent prediction with only 0.027 of error. However, we will be experimenting by using different kernels.
+
+
+
+<u>Using various kernels, MSE,  KFold</u>
+
+```python
+class Kernel:
+    @staticmethod
+    def Gaussian(x):
+        return np.where(np.abs(x) > 4, 0, 1 / np.sqrt(2 * np.pi) * np.exp(-0.5 * x**2))
+
+    @staticmethod
+    def Tricubic(x):
+        return np.where(np.abs(x) > 1, 0, (1 - np.abs(x)**3)**3)
+
+    @staticmethod
+    def Epanechnikov(x):
+        return np.where(np.abs(x) > 1, 0, 3 / 4 * (1 - np.abs(x)**2))
+
+    @staticmethod
+    def Quartic(x):
+        return np.where(np.abs(x) > 1, 0, 15 / 16 * (1 - np.abs(x)**2)**2)
+    
+    @staticmethod
+    def Cauchy(x):
+        return 1 / (1 + x**2)
+    
+def calculate_distances(X):
+    return cdist(X, X, metric='euclidean')
+```
+
+I have added Cauchy kernel because it is especially robust to outliers. It discounts distant points and it would be interesting to see how it behaves with this dataset.
+
+
+
+```python
+class Lowess(BaseEstimator, RegressorMixin):
+    def __init__(self, kernel=Cauchy, tau=0.1, regularization=0.001):
+        self.kernel = kernel
+        self.tau = tau
+        self.regularization = regularization
+        self.fitted_ = False  
+
+    def fit(self, X, y):
+        self.X_train = X
+        self.y_train = y
+        self.distances = calculate_distances(self.X_train)
+        self.fitted_ = True  
+        return self 
+
+    def predict(self, X_new):
+        predictions = []
+        for i in range(len(X_new)):
+            test_point = X_new[i].reshape(1, -1)  
+            test_distances = cdist(test_point, self.X_train, metric='euclidean').flatten()
+            w = kernel_function(test_distances, self.kernel, self.tau)
+            model = Ridge(alpha=self.regularization)
+            W = np.diag(w)  
+            X_weighted = W @ self.X_train
+            y_weighted = W @ self.y_train
+            model.fit(X_weighted, y_weighted)
+            prediction = model.predict(test_point)
+            predictions.append(prediction[0])  
+        return np.array(predictions)
+```
+
+
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+model = Lowess(kernel=Kernel.Cauchy, tau=0.15)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print("First 5 Predictions: ", y_pred[:5])
+print("First 5 Actual Values: ", y_test[:5])
+mse = mean_squared_error(y_test, y_pred)
+print(f"Mean Squared Error: {mse}")
+```
+
+First 5 Predictions:  [  6.62213287  -1.71778161 -64.41037369 -15.58551274  48.21792383] 
+First 5 Actual Values:  [  2.92537224   0.22933713 -62.86348662 -22.0170934   50.81219556]
+
+
+
+```
+plt.scatter(y_test, y_pred, color='blue')
+plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--')
+plt.xlabel('Actual Values')
+plt.ylabel('Predicted Values')
+plt.title('Predicted vs Actual Values')
+plt.show()
+```
+
+![image-20240920234600948](C:\Users\Yera\AppData\Roaming\Typora\typora-user-images\image-20240920234600948.png)
+
+
+
+
+
+```python
+residuals = y_test - y_pred
+plt.scatter(y_pred, residuals, color='green')
+plt.axhline(y=0, color='red', linestyle='--')
+plt.xlabel('Predicted Values')
+plt.ylabel('Residuals')
+plt.title('Residual Plot')
+plt.show()
+```
+
+![image-20240920234824379](C:\Users\Yera\AppData\Roaming\Typora\typora-user-images\image-20240920234824379.png)
+
+From this graph, we can see that most residuals are around zero. This signifies that the model has successfully captured the relationship between the features and the target variable. The predictions seem to be accurate since there are only small amount of differences between predicted and actual value. 
+
+Also because the residuals do not show a clear trend, it is likely that the model did not miss significant trend in the dataset.
+
+There is one outlier at the top right of the plot, meaning that the model has not performed well in that area or there was a notable part in the dataset that could have been addressed beforehand for its specialty.
+
+```python
+kf = KFold(n_splits=10, shuffle=True, random_state=42)
+mse_list = []
+
+for train_index, test_index in kf.split(X_scaled):
+    X_train_fold, X_test_fold = X_scaled[train_index], X_scaled[test_index]
+    y_train_fold, y_test_fold = y[train_index], y[test_index]
+    
+    model = Lowess(kernel=Kernel.Cauchy, tau=0.15)
+    model.fit(X_train_fold, y_train_fold)
+    y_pred_fold = model.predict(X_test_fold)
+    mse_fold = mean_squared_error(y_test_fold, y_pred_fold)
+    mse_list.append(mse_fold)
+
+print(f"10-Fold Cross-Validated MSE: {np.mean(mse_list)}")
+```
+
+Mean Squared Error: 1216.443541997037 
+10-Fold Cross-Validated MSE: 443.1395488926818
+
+```python
+param_grid = {'tau': np.linspace(0.01, 0.5, 10)}
+grid_search = GridSearchCV(Lowess(), param_grid, scoring='neg_mean_squared_error', cv=5)
+grid_search.fit(X_train, y_train)
+best_tau = grid_search.best_params_['tau']
+print(f"Best tau: {best_tau}")
+
+best_model = Lowess(kernel=Kernel.Cauchy, tau=best_tau)
+best_model.fit(X_train, y_train)
+best_y_pred = best_model.predict(X_test)
+best_mse = mean_squared_error(y_test, best_y_pred)
+print(f"Optimized Mean Squared Error: {best_mse}")
+```
+
+Best tau: 0.5 
+Optimized Mean Squared Error: 571.6161212691303
+
+
+
+Now let's compare the performance of each kernel
+
+```
+kernels = {
+    'Gaussian': Kernel.Gaussian,
+    'Tricubic': Kernel.Tricubic,
+    'Epanechnikov': Kernel.Epanechnikov,
+    'Quartic': Kernel.Quartic,
+    'Cauchy': Kernel.Cauchy
+}
+
+for kernel_name, kernel_function in kernels.items():
+    mse_list = []
+    print(f"Running cross-validation for kernel: {kernel_name}")
+    
+    for train_index, test_index in kf.split(X_scaled):
+        X_train, X_test = X_scaled[train_index], X_scaled[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+        model = KernelWeightedRidgeModel(kernel=kernel_function, tau=0.1, alpha=0.001, max_iter=5000)
+        distances = calculate_distances(X_train)
+        model.fit(X_train, y_train, distances)
+        test_distances = cdist(X_test, X_train, metric='euclidean')
+        y_pred = model.predict(X_test, test_distances)
+        mse = mean_squared_error(y_test, y_pred)
+        mse_list.append(mse)
+    
+    avg_mse = np.mean(mse_list)
+    kernel_mse_results[kernel_name] = avg_mse
+
+# Results
+print("Comparison of Kernels Based on 10-Fold Cross-Validated MSE:")
+for kernel_name, mse in kernel_mse_results.items():
+    print(f"{kernel_name}: {mse:.4f}")
+```
+
+Comparison of Kernels Based on 10-Fold Cross-Validated MSE: 
+
+Gaussian: 4855.9033 
+Tricubic: 6398.6382 
+Epanechnikov: 6399.3141 
+Quartic: 6398.7581 
+Cauchy: 789.5126
+
+```python
+# Visualize the results
+plt.bar(kernel_mse_results.keys(), kernel_mse_results.values())
+plt.xlabel('Kernel')
+plt.ylabel('Mean Squared Error')
+plt.title('Kernel Comparison Based on 10-Fold Cross-Validation')
+plt.show()
+```
+
+![image-20240920233946295](C:\Users\Yera\AppData\Roaming\Typora\typora-user-images\DATA440HW1)
+
+The first four bars are similar in height, especially the middle three, which means that they have similar performance. Cauchy shows a significant amount of decrease in mean squared error, signifying that it was likely that the dataset had a lot of distant values that was better not being accounted for. However, this dataset was small, so there needs to be further testing on it. 
