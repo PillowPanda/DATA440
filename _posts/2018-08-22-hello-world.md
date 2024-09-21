@@ -250,14 +250,8 @@ plt.ylabel('Predicted Values')
 plt.title('Predicted vs Actual Values')
 plt.show()
 ```
-<!-- <img src="predicted_comparison.png" alt="predicted values comparison"> -->
-
-![alt text](/assets/images/predicted_comparison.png)
 
 ![Predicted Values Comparison]({{ site.baseurl }}/assets/images/predicted_comparison.png)
-
-
-![PredictedValuesComparison]({{ site.baseurl }}/assets/images/predicted_comparison.png)
 
 
 ```python
@@ -270,9 +264,7 @@ plt.title('Residual Plot')
 plt.show()
 ```
 
-<!-- <img src="residuals_output.png" alt="residual graph"> -->
-
-![alt text](/assets/images/residuals_output.png)
+![Residuals_Graph]({{ site.baseurl }}/assets/images/residuals_output.png)
 
 
 From this graph, we can see that most residuals are around zero. This signifies that the model has successfully captured the relationship between the features and the target variable. The predictions seem to be accurate since there are only small amount of differences between predicted and actual value. 
@@ -371,11 +363,7 @@ plt.ylabel('Mean Squared Error')
 plt.title('Kernel Comparison Based on 10-Fold Cross-Validation')
 plt.show()
 ```
-![alt text](/assets/images/kernels_output.png)
 
 ![Kernel_Comparison]({{ site.baseurl }}/assets/images/kernels_output.png)
-
-
-![second](https://github.com/PillowPanda/240920_test/blob/master/kernels_output.png)
 
 The first four bars are similar in height, especially the middle three, which means that they have similar performance. Cauchy shows a significant amount of decrease in mean squared error, signifying that it was likely that the dataset had a lot of distant values that was better not being accounted for. However, this dataset was small, so there needs to be further testing on it. 
