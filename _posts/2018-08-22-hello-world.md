@@ -362,8 +362,9 @@ plt.ylabel('Mean Squared Error')
 plt.title('Kernel Comparison Based on 10-Fold Cross-Validation')
 plt.show()
 ```
-<img src="{{site.baseurl}}/assets/img/kernels_output.png">
+![image](/assets/images/kernels_output.png)
 
+<img src="/assets/images/kernels_output.png" alt="hello">
 
 <img src="kernels_output.png" alt="kernel graph comparison">
 
