@@ -237,7 +237,7 @@ mse = mean_squared_error(y_test, y_pred)
 print(f"Mean Squared Error: {mse}")
 ```
 
-First 5 Predictions:  [  6.62213287  -1.71778161 -64.41037369 -15.58551274  48.21792383] 
+First 5 Predictions:  [  6.62213287  -1.71778161 -64.41037369 -15.58551274  48.21792383] <br>
 First 5 Actual Values:  [  2.92537224   0.22933713 -62.86348662 -22.0170934   50.81219556]
 
 
@@ -289,7 +289,7 @@ for train_index, test_index in kf.split(X_scaled):
 print(f"10-Fold Cross-Validated MSE: {np.mean(mse_list)}")
 ```
 
-Mean Squared Error: 1216.443541997037 
+Mean Squared Error: 1216.443541997037 <br>
 10-Fold Cross-Validated MSE: 443.1395488926818
 
 ```python
@@ -306,7 +306,7 @@ best_mse = mean_squared_error(y_test, best_y_pred)
 print(f"Optimized Mean Squared Error: {best_mse}")
 ```
 
-Best tau: 0.5 
+Best tau: 0.5 <br>
 Optimized Mean Squared Error: 571.6161212691303
 
 
@@ -362,7 +362,7 @@ plt.ylabel('Mean Squared Error')
 plt.title('Kernel Comparison Based on 10-Fold Cross-Validation')
 plt.show()
 ```
-![image](/assets/images/kernels_output.png)
+![alt text](/assets/images/kernels_output.png)
 
 <img src="/assets/images/kernels_output.png" alt="hello">
 
