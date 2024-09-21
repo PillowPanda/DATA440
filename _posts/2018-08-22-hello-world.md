@@ -364,6 +364,9 @@ plt.show()
 ```
 ![alt text](/assets/images/kernels_output.png)
 
+![alt text](https://github.com/PillowPanda/240920_test/blob/master/kernels_output.png)
+
+
 <img src="/assets/images/kernels_output.png" alt="hello">
 
 <img src="kernels_output.png" alt="kernel graph comparison">
