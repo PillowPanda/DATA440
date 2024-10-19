@@ -26,7 +26,7 @@ baseurl: ''
 title: 'My website'
 description: 'This is my new website'
 permalink: pretty
-logo: {% include logo image="https://imgur.com/iwc8jKi" caption="bear!" %}
+logo: "https://imgur.com/iwc8jKi"
 
 # Pagination
 paginate: 5
