@@ -26,7 +26,7 @@ baseurl: ''
 title: 'My website'
 description: 'This is my new website'
 permalink: pretty
-logo: 'bear-modified.jpg'
+logo: 'https://imgur.com/iwc8jKi'
 
 # Pagination
 paginate: 5
@@ -73,4 +73,4 @@ defaults:
 
 # Site settings
 url: 'https://pillowpanda.github.io'
-baseurl: '/240920_test'  # Base URL for the repository
+baseurl: '/DATA440'  # Base URL for the repository
