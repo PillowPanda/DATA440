@@ -26,7 +26,7 @@ baseurl: ''
 title: 'My website'
 description: 'This is my new website'
 permalink: pretty
-logo: "https://imgur.com/iwc8jKi"
+logo: "https://i.imgur.com/iwc8jKi.png"
 
 # Pagination
 paginate: 5
