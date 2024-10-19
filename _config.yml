@@ -27,8 +27,6 @@ title: 'My website'
 description: 'This is my new website'
 permalink: pretty
 logo: "/assets/images/bear-modified.jpg"
-# "https://i.imgur.com/iwc8jKi.jpg"
-# "{{ site.baseurl }}/assets/images/bear-modified.jpg"
 
 # Pagination
 paginate: 5
